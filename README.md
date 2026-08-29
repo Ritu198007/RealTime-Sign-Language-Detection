@@ -1,134 +1,190 @@
-# Real-Time Sign Language Detection 🤟
+🤟 Real-Time Sign Language Detection
 
-A computer vision and machine learning project that aims to recognize ASL (American Sign Language) hand signs in real time and convert them into text.
+Real-time ASL fingerspelling recognition using computer vision and machine learning.
 
-The project uses a webcam to detect hand landmarks, extract hand features, and classify static ASL alphabet signs using machine learning.
+A computer vision project that uses a webcam, MediaPipe hand landmarks, and a Random Forest classifier to recognize static ASL fingerspelling signs and convert them into letters.
 
-## 🚧 Project Status
+The project is being developed toward a real-time sign-to-text communication system.
 
-**Currently in development.**
+🚧 Project Status
 
-### Completed
-- [x] Webcam hand detection
-- [x] 21-point hand landmark detection using MediaPipe
-- [x] ASL alphabet dataset collection
-- [x] Landmark-based feature extraction
-- [x] Hand landmark normalization
-- [x] Random Forest classification
-- [x] Model evaluation
-- [x] 94.8% test accuracy on the current static-sign dataset
-- [x] Dynamic data collection for J and Z
+In active development
 
-### Next Steps
-- [ ] Real-time ASL letter prediction
-- [ ] Improve classification accuracy
-- [ ] Handle J and Z using movement recognition
-- [ ] Build real-time sign-to-text output
-- [ ] Add word and sentence formation
-- [ ] Add text-to-speech
-- [ ] Test with multiple users
-- [ ] Improve robustness under different lighting and backgrounds
+Current Progress
 
----
+Webcam hand tracking
 
-## 🎯 Project Goal
+21-point hand landmark detection with MediaPipe
 
-The long-term goal is to develop a real-time system that can recognize sign language through a webcam and convert it into readable text.
+Static ASL alphabet dataset collection
 
-The planned pipeline is:
+Landmark-based feature extraction
 
-```text
-Webcam
-   ↓
-Hand Detection
-   ↓
-21 Hand Landmarks
-   ↓
-Feature Normalization
-   ↓
-Machine Learning Model
-   ↓
-ASL Sign Recognition
-   ↓
-Text
+Hand landmark normalization
+
+Random Forest classifier
+
+Train/test evaluation
+
+94.80% test accuracy on the current static-sign dataset
+
+Dynamic sequence collection for J and Z
+
+Real-time static-letter prediction
+
+J/Z movement recognition
+
+Real-time sign-to-text interface
+
+Word and sentence formation
+
+Text-to-speech
+
+Multi-user evaluation
+
+Robustness improvements
+
+🎯 Goal
+
+The long-term goal is to build an accessible system that can recognize ASL fingerspelling through a webcam and convert recognized signs into readable text.
+
+Planned Pipeline
+
+                 Webcam
+                    │
+                    ▼
+            Hand Landmark Detection
+                    │
+                    ▼
+              21 Landmarks
+                    │
+                    ▼
+          Feature Normalization
+                    │
+                    ▼
+           Machine Learning Model
+                    │
+                    ▼
+             Sign Recognition
+                    │
+                    ▼
+                  Text
+                    │
+                    ▼
+            Words / Sentences
+                    │
+                    ▼
+             Text-to-Speech
 
 🧠 How It Works
-1. Hand Detection
 
-MediaPipe detects the user's hand and provides 21 landmarks for each hand.
+1. Hand Landmark Detection
+
+MediaPipe detects the hand and provides 21 landmarks.
 
 Each landmark contains:
 
-X coordinate
-Y coordinate
-Z coordinate
+X — horizontal position
 
-This gives:
+Y — vertical position
+
+Z — depth estimate
+
+Therefore, each hand produces:
 
 21 landmarks × 3 coordinates = 63 features
-2. Feature Normalization
 
-Raw coordinates depend on the position and size of the hand in the camera frame.
+2. Landmark Normalization
 
-To make the model more robust, the landmarks are normalized by:
+Raw coordinates change when the hand moves around the camera frame or changes size.
 
-Using the wrist as the origin.
+To make the classifier more robust, the landmarks are normalized by:
+
+Using the wrist landmark as the origin.
+
 Translating the remaining landmarks relative to the wrist.
-Scaling the coordinates based on hand size.
 
-This allows the model to focus more on the shape of the hand rather than its exact position in the frame.
+Scaling the hand according to its overall size.
 
-3. Machine Learning
+This helps the model learn the shape and geometry of the hand instead of memorizing its exact location in the frame.
 
-A Random Forest classifier is trained using the normalized landmark features.
+3. Classification
 
-The current static-sign pipeline is:
+A Random Forest classifier learns the relationship between the normalized landmark features and their corresponding ASL letter.
 
 Hand
- ↓
+  ↓
 MediaPipe
- ↓
+  ↓
 21 Landmarks
- ↓
+  ↓
 Normalization
- ↓
+  ↓
 63 Features
- ↓
+  ↓
 Random Forest
- ↓
-Letter Prediction
+  ↓
+Letter
 
-📊 Current Model Performance
+📊 Model Performance
 
 The current normalized Random Forest model achieved:
 
 94.80% test accuracy
 
-This was an improvement over the initial model:
+Model
 
-| Model                    |   Accuracy |
-| ------------------------ | ---------: |
-| Initial Random Forest    |     82.80% |
-| Normalized Random Forest |     94.80% |
+Test Accuracy
 
-The improvement came from normalizing the hand landmarks before training.
+Initial Random Forest
 
-Note: The reported accuracy is based on the current dataset and test split. It should not be interpreted as real-world accuracy across different people, cameras, lighting conditions, or backgrounds.
+82.80%
 
-🔤 ASL Alphabet
+Normalized Random Forest
 
-The current static-sign model is designed around the ASL fingerspelling alphabet.
+94.80%
 
-Static signs:
+The improvement came from normalizing the landmark coordinates before training.
+
+Important Note
+
+The 94.80% result is based on the current dataset and held-out test split. It should not be interpreted as 94.80% real-world ASL translation accuracy.
+
+Performance may differ across:
+
+Different users
+
+Cameras
+
+Lighting conditions
+
+Backgrounds
+
+Hand sizes and orientations
+
+Real-world usage
+
+🔤 ASL Fingerspelling
+
+The project currently treats the alphabet in two categories.
+
+Static Signs
+
+Most fingerspelling letters can be represented primarily by a single hand configuration:
 
 A B C D E F G H I
 K L M N O P Q R S T U V W X Y
+
 Dynamic Signs
 
-The letters J and Z involve hand movement, so they are being handled separately using temporal/movement data rather than treating them as ordinary static hand poses.
+J and Z involve movement, so they are collected as landmark sequences over time rather than as a single static frame.
 
-J → Movement recognition
-Z → Movement recognition
+J → movement sequence
+Z → movement sequence
+
+These will be handled by a separate temporal/movement-recognition stage.
+
+This project focuses on ASL fingerspelling rather than attempting to represent the complete ASL language.
 
 📁 Project Structure
 
@@ -137,71 +193,102 @@ RealTime-Sign-Language-Detection/
 ├── images/
 │
 ├── hand_sign.py
-│   └── Hand landmark detection demo
+│   └── Hand landmark detection
 │
 ├── collect_data.py
-│   └── Collects static ASL sign data
+│   └── Static sign data collection
 │
 ├── collect_dynamic.py
-│   └── Collects movement sequences for dynamic signs
+│   └── Dynamic J/Z sequence collection
 │
 ├── train_model.py
-│   └── Trains the static sign classifier
+│   └── Static Random Forest training
 │
 ├── hand_sign_dataset.csv
-│   └── Static hand landmark dataset
+│   └── Static landmark dataset
 │
 ├── dynamic_hand_sign_dataset.csv
-│   └── Dynamic sign sequence dataset
+│   └── Dynamic landmark sequences
 │
 ├── hand_landmarker.task
 │   └── MediaPipe hand landmark model
 │
 ├── asl_static_model.pkl
-│   └── Initial static classifier
+│   └── Initial classifier
 │
 ├── asl_static_model_normalized.pkl
-│   └── Normalized static classifier
+│   └── Normalized classifier
 │
 ├── face_detection.py
 │   └── Earlier OpenCV experiment
 │
+├── .gitignore
 └── README.md
 
-🛠️ Technologies Used
+🛠️ Tech Stack
+
+Technology
+
+Purpose
+
 Python
+
+Core programming language
+
 OpenCV
+
+Webcam and image processing
+
 MediaPipe
+
+Hand landmark detection
+
 NumPy
+
+Numerical operations
+
 Scikit-learn
+
+Machine learning
+
+Random Forest
+
+Static sign classification
+
 Joblib
+
+Model serialization
+
 CSV
+
+Dataset storage
 
 ⚙️ Installation
 
-Clone the repository:
+1. Clone the repository
 
 git clone https://github.com/Ritu198007/RealTime-Sign-Language-Detection.git
-
-Move into the project directory:
-
 cd RealTime-Sign-Language-Detection
 
-Create a virtual environment:
+2. Create a virtual environment
 
 python -m venv venv
 
-Activate it.
+3. Activate the environment
 
 Windows
+
 venv\Scripts\activate
-Linux/macOS
+
+Linux / macOS
+
 source venv/bin/activate
 
-Install the dependencies:
+4. Install dependencies
 
 pip install opencv-python mediapipe numpy scikit-learn joblib
-▶️ Running Hand Landmark Detection
+
+▶️ Run Hand Landmark Detection
 
 Run:
 
@@ -209,40 +296,37 @@ python hand_sign.py
 
 This opens the webcam and displays the detected hand landmarks.
 
-The system tracks the 21 landmarks of the hand in real time.
+The current implementation tracks the 21 landmarks of a detected hand in real time.
 
-📥 Collecting Static Sign Data
+📥 Collect Static Sign Data
 
-To collect training data:
+Run:
 
 python collect_data.py
 
-The program allows you to select a letter and collect multiple samples.
+The collector allows a letter to be selected and records multiple landmark samples.
 
-Each sample contains the 21 hand landmarks.
+A useful dataset should contain natural variations such as:
 
-For example:
+Slight hand-position changes
 
-A → 50 samples
-B → 50 samples
-C → 50 samples
-...
+Small rotations
 
-Natural variations are useful during data collection, including:
-
-Slight changes in hand position
-Slight changes in hand rotation
 Different distances from the camera
-Natural differences in finger positioning
-🎥 Collecting Dynamic Sign Data
 
-J and Z involve movement, so they require sequences of landmarks rather than a single frame.
+Natural finger-position differences
+
+Different lighting conditions
+
+For better generalization, future datasets should also include samples from multiple users.
+
+🎥 Collect Dynamic J/Z Data
 
 Run:
 
 python collect_dynamic.py
 
-The program records multiple frames for each movement sequence.
+Unlike static signs, J and Z are represented using sequences of landmarks over time.
 
 Conceptually:
 
@@ -252,164 +336,240 @@ Frame 2
    ↓
 Frame 3
    ↓
-...
+  ...
+   ↓
 Frame N
    ↓
-Movement sequence
+Movement Sequence
    ↓
 J / Z
-🤖 Training the Model
+
+🤖 Train the Static Model
 
 Run:
 
 python train_model.py
 
-The program:
+The training pipeline:
 
-Loads the dataset.
+Loads the static dataset.
+
 Extracts landmark coordinates.
+
 Normalizes the hand landmarks.
+
 Splits the dataset into training and testing sets.
+
 Trains a Random Forest classifier.
-Evaluates the model.
+
+Evaluates the classifier.
+
 Saves the trained model.
 
 The normalized model is saved as:
 
 asl_static_model_normalized.pkl
-📈 Improving the Model
 
-The current model achieved 94.8% test accuracy, but there is still room for improvement.
+🔬 Dataset Strategy
 
-Potential improvements include:
+The model currently uses landmark data rather than storing full camera images for each sample.
 
-More training data
+For each static sample:
 
-Collect more samples for difficult letters.
+21 landmarks
+×
+3 coordinates
+=
+63 numerical features
+
+The goal is to capture variations while preserving the underlying handshape.
+
+Future Dataset Improvements
+
+The dataset can be expanded with:
+
+More samples per letter
 
 Multiple users
 
-Training with different people's hands can improve generalization.
+Different camera angles
 
-Person 1
-Person 2
-Person 3
-Person 4
-        ↓
-Larger dataset
-        ↓
-More robust model
+Different lighting
+
+Different backgrounds
+
+Different hand distances
+
+More natural hand orientations
+
+🔮 Roadmap
+
+Phase 1 — Computer Vision Foundation
+
+Webcam input
+
+Hand detection
+
+Landmark extraction
+
+Phase 2 — Dataset
+
+Static alphabet collection
+
+Landmark normalization
+
+Dynamic J/Z collection
+
+Phase 3 — Machine Learning
+
+Random Forest classifier
+
+Model evaluation
+
+94.80% current test accuracy
+
+Improve generalization
+
+Phase 4 — Real-Time Recognition
+
+Webcam prediction
+
+Confidence filtering
+
+Stable prediction over consecutive frames
+
+J/Z movement recognition
+
+Phase 5 — Sign to Text
+
+Letter accumulation
+
+Word formation
+
+Sentence formation
+
+Correction/backspace mechanism
+
+Text-to-speech
+
+Phase 6 — Real-World Testing
+
+Multi-user testing
+
 Different environments
 
-Collecting samples under different:
+Performance optimization
 
-Lighting conditions
-Backgrounds
-Camera positions
-Hand orientations
+User-friendly interface
 
-can make the system more robust.
+💡 Example of the Intended Experience
 
-Better feature engineering
+The final application is intended to work approximately like this:
 
-Additional geometric features could be explored, such as:
-
-Finger angles
-Distances between landmarks
-Relative finger lengths
-Joint angles
-🔮 Future Features
-
-The long-term goal is to turn the classifier into a complete communication application.
-
-Real-Time Prediction
-Webcam
- ↓
-Hand landmarks
- ↓
-Model
- ↓
-Predicted letter
+User performs a sign
+        ↓
+Webcam captures hand
+        ↓
+MediaPipe extracts landmarks
+        ↓
+Model recognizes the sign
+        ↓
+Recognized letter appears
+        ↓
+Letters form words
+        ↓
+Words form sentences
 
 Example:
-
-Prediction: A
-Confidence: 96%
-Word Formation
-
-Individual predictions can be combined:
 
 H → E → L → L → O
 
 HELLO
-Sentence Formation
 
-The system can eventually support:
+Eventually:
 
 HELLO HOW ARE YOU
-Text-to-Speech
 
-The generated text can eventually be converted into speech so that the system can communicate the signed message verbally.
+can be displayed as text and optionally converted to speech.
 
 ⚠️ Limitations
 
-This project is currently a prototype.
+This is currently an experimental prototype.
 
-The model's performance may vary depending on:
+The model may perform differently depending on:
 
 User
+
 Camera quality
+
 Lighting
+
 Background
+
 Hand orientation
+
 Distance from camera
-Similar-looking hand signs
 
-The current 94.8% accuracy is based on the current dataset and test split and does not guarantee the same performance in real-world usage.
+Similar-looking handshapes
 
-🤝 Future Development
+The current 94.80% test accuracy does not guarantee equivalent performance in real-world conditions.
 
-The project is being developed incrementally:
+Additionally, recognizing individual fingerspelling letters is different from translating complete ASL conversations. Full sign-language translation requires substantially more linguistic and temporal context.
 
-Hand Detection
-      ↓
-Landmark Extraction
-      ↓
-Dataset Collection
-      ↓
-Feature Normalization
-      ↓
-Model Training
-      ↓
-Real-Time Prediction
-      ↓
-J/Z Movement Recognition
-      ↓
-Sign → Text
-      ↓
-Sentence Formation
-      ↓
-Text → Speech
+🚀 Future Improvements
+
+Potential improvements include:
+
+More diverse training data
+
+Multi-user datasets
+
+Better feature engineering
+
+Temporal models for dynamic signs
+
+Prediction smoothing
+
+Confidence thresholds
+
+Deep-learning-based classifiers
+
+Real-time text generation
+
+Text-to-speech
+
+A graphical user interface
+
+Mobile or edge deployment
+
+🤝 Contributing
+
+Contributions, ideas, and suggestions are welcome.
+
+If you'd like to contribute:
+
+Fork the repository.
+
+Create a feature branch.
+
+Make your changes.
+
+Test your changes.
+
+Open a pull request.
+
 📜 Disclaimer
 
 This project is an educational and experimental computer vision project.
 
-It is intended to explore real-time hand-sign recognition and should not be considered a complete or authoritative ASL translation system.
+It is intended to explore ASL fingerspelling recognition and sign-to-text technology. It should not currently be considered a complete, authoritative, or production-ready ASL translation system.
 
 ⭐ Project
 
 Real-Time Sign Language Detection
 
-Built with Python, OpenCV, MediaPipe, and Machine Learning.
+Built with:
 
+Python · OpenCV · MediaPipe · NumPy · Scikit-learn
 
-### One thing I'd change before committing
-
-Your README currently says **94.8%**, which is great, but keep the wording **"94.8% test accuracy on the current dataset"** rather than just "94.8% accuracy." That's much more credible on GitHub because it makes clear this isn't a claim of 94.8% real-world ASL translation accuracy.
-
-Then commit it:
-
-```bash
-git add README.md
-git commit -m "Add project documentation"
-git push
+Turning hand movements into meaningful text — one sign at a time. 🤟
